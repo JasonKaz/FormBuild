@@ -1,0 +1,136 @@
+*	{
+	padding: 0px;
+	margin: 0px;
+}
+
+body	{	
+	text-align: center; /* for IE */
+    background: #262626 url('bg.png') repeat-x;
+    font-family: Verdana;
+}
+
+a   {
+    color: #F2F2F2;
+    outline: none;
+}
+
+h1  {
+    font-size: 20px;
+}
+
+h2  {
+    font-size: 15px;
+}
+
+#container	{
+	margin: 0 auto;
+	text-align: left;
+	width: 700px;
+}
+
+#head   {
+    font-size: 50px;
+    font-weight: bold;
+    height: 55px;
+    padding: 0px 5px;
+    color: #000;
+}
+
+#body   {
+    color: #F2F2F2;
+    margin-top: 20px;
+    overflow: auto;
+    padding: 5px;
+    background: #333;
+}
+
+#i_choose, #code, .vinfo, #vjs, #vphp, #div_class_name, #mysql   {
+    display: none;
+    overflow: auto;
+}
+
+#rt  {
+    margin-left: 350px;
+}
+
+#code,#saved   {
+    clear: both;
+    margin-top: 10px;
+}
+
+#opts   {
+    width: 50%;
+    float: left;
+    border-right: 2px solid #000;
+}
+
+#the_code,#vjs,#vphp   {
+    border: 1px solid #000;
+}
+
+.si  {
+    margin-bottom: 5px;
+    padding: 3px;
+    background: #1F1F1F;
+    width: 96%;
+}
+
+.itext  {
+    width: 50px;
+}
+
+.sm {
+    font-size: 14px;
+}
+
+.sm a   {
+    color: #000;
+}
+
+.info   {
+    cursor: pointer;
+}
+
+#popup  {
+    display: none;
+    background: #404040;
+    border: 2px solid #676767;
+    padding: 10px;
+    -moz-border-radius: 10px;
+    -moz-box-shadow: 0 0 20px #000;
+    -webkit-box-shadow: 0 0 20px #000;
+    -webkit-border-radius: 10px;
+    max-width: 500px;
+}
+
+#popup h2   {
+    display: inline;
+}
+
+#close  {
+    float: right;
+    color: #9ED838;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+#msg    {
+    clear: both;
+}
+
+.t label    {
+    width: 75px;
+    float: left;
+}
+
+.del_code    {
+    cursor: pointer;
+}
+
+.center {
+    text-align: center;
+}
+
+#saved_code_preview_msg {
+    display: none;
+}

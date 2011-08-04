@@ -1,0 +1,123 @@
+*	{
+	padding: 0;
+	margin: 0;
+    outline: 0;
+}
+
+body	{	
+	text-align: center; /* for IE */
+    background: #262626;
+    font-family: Verdana;
+}
+
+a   {
+    color: #F2F2F2;
+    outline: none;
+}
+
+h1  {
+    font-size: 20px;
+}
+
+h2  {
+    font-size: 15px;
+}
+
+h3  {
+    display: inline;
+}
+
+#attr label   {
+    min-width: 68px;
+    display: inline-block;
+}
+
+.sm {
+    font-size: 14px;
+}
+
+.sm a   {
+    color: #000;
+}
+
+.info   {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+.block  {
+    margin-right: 5px;
+    padding: 8px;
+    background: #1F1F1F;
+}
+
+.opt    {
+    float: right;
+    display: none;
+}
+
+.opt a  {
+    color: #F00;
+    text-decoration: none;
+}
+
+.input_number .plus, .input_number .minus {
+    float: left;
+}
+
+#head_bg    {
+    position: absolute;
+    height: 55px;
+    width: 100%;
+    background: #9ED738;
+    z-index: 1;
+    border-bottom: 2px solid #000;
+}
+
+#container	{
+	margin: 0 auto;
+	text-align: left;
+	width: 975px;
+}
+
+#head   {
+    font-size: 50px;
+    font-weight: bold;
+    height: 55px;
+    padding: 0px 5px;
+    color: #000;
+    z-index: 2;
+    position: relative;
+}
+
+#body   {
+    color: #F2F2F2;
+    margin-top: 20px;
+    overflow: auto;
+    padding: 5px;
+    background: #333;
+}
+
+#inputs, #preview, #options {
+    float: left;
+    margin-right: 5px;
+}
+
+#inputs {
+    width: 21%;
+}
+
+#preview    {
+    width: 52%;
+}
+
+#options    {
+    width: 25%;
+}
+
+#popup  {
+    width: 300px;
+}
