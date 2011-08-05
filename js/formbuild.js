@@ -1,6 +1,7 @@
 var AvailInputs=["text","password","radio","checkbox","textarea","select"],
 Inputs=[],
-Order=[];
+Order=[],
+Selected=null;
 
 var Attributes=["id","name","disabled","mex_len","size","auto_complete","value","checked","cols","rows","number_min","number_max","number_value","number_step","range_min","range_max","range_step"],
 InputAttributes={
@@ -58,7 +59,7 @@ $(function(){
         }
     });
     
-    function input(Type, JQ_Replacement){       
+    function Input(Type, JQ_Replacement){
         this.InputID=Inputs.length;
         this.UseJQ=JQ_Replacement!=null?true:false;
         
@@ -197,11 +198,11 @@ $(function(){
         };
         
         this.getautocompletehtml=function(){
-            return this.AutoComplete==false?' autocomplete="off"':'';
+            return this.AutoComplete?' autocomplete="off"':'';
         };
         
         this.getdisabledhtml=function(){
-            return this.Disabled==true?' disabled="true"':'';
+            return this.Disabled?' disabled="true"':'';
         };
         
         this.name=function(Name){
@@ -413,7 +414,7 @@ $(function(){
                 		$(colpkr).fadeOut(500);
                         return false;
                 	},
-                	onChange:function (hsb, hex, rgb) {
+                	onChange:function (hsb, hex) {
                 		$('#input_'+Input.InputID).children('div').css('backgroundColor', '#' + hex);
                 	}
                 });
@@ -465,11 +466,11 @@ $(function(){
         if (type=='range' || type=="number" || type=="color" || type=="date" || type=="time"){
             prompt('Input Type Selection','This HTML5 input does not work 100% in all browsers. What would you like to do?',{
                 'jQuery Replacement' : function(){
-                    new input(type,true);
+                    new Input(type,true);
                     $(this).dialog('close');
                 },
                 'HTML5' : function(){
-                    new input(type);
+                    new Input(type,false);
                     $(this).dialog('close');
                 },
                 Cancel : function(){
@@ -479,7 +480,7 @@ $(function(){
         }else if(type=="datetime-local" || type=="datetime" || type=="month" || type=="week"){
             prompt('Input Type Selection','This HTML5 input does not work 100% in all browsers and does not have a JavaScript replacement. What would you like to do?',{
                 'Insert Anyway' : function(){
-                    new input(type);
+                    new Input(type,false);
                     $(this).dialog('close');
                 },
                 Cancel : function(){
@@ -487,7 +488,7 @@ $(function(){
                 }
             });
         }else{
-            new input(type);
+            new Input(type,false);
         } 
     });
     
@@ -566,7 +567,7 @@ $(function(){
                         if(me.SliderMax!=100)t+='\n     max : '+me.SliderMax+',';
                         if(me.SliderStep!=1)t+='\n     step : '+me.SliderStep+',';
                         if(me.SliderValue)t+='\n     value : '+me.Value+',';
-                        if(me.SliderAnim!=false)t+='\n    animate : true,'
+                        if(me.SliderAnim!=false)t+='\n    animate : true,';
                         js+=t.substr(0,t.length-1)+'\n';
                     }
                     
@@ -690,11 +691,11 @@ $(function(){
     });
     
     $SetChecked.change(function(){
-        Inputs[Selected].checked($(this).attr('checked')=='checked'?true:false); 
+        Inputs[Selected].checked($(this).prop('checked'));
     });
     
     $SetDisabled.change(function(){
-        Inputs[Selected].disabled($(this).attr('checked')=='checked'?true:false); 
+        Inputs[Selected].disabled($(this).prop('checked'));
     });
     
     $SetCols.keyup(function(){
@@ -726,7 +727,7 @@ $(function(){
     });
     
     $SetSliderAnim.change(function(){
-        Inputs[Selected].slideranim($(this).attr('checked')=='checked'?true:false); 
+        Inputs[Selected].slideranim($(this).prop('checked'));
     });
     
     $SetValue.keyup(function(){
@@ -734,7 +735,7 @@ $(function(){
     });
     
     $SetAutoComplete.change(function(){
-        Inputs[Selected].autocomplete($(this).attr('checked')=='checked'?true:false); 
+        Inputs[Selected].autocomplete($(this).prop('checked'));
     });
     
     $SetNumberMin.change(function(){
