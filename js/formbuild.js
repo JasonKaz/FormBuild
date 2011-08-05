@@ -26,8 +26,7 @@ InputAttributes={
 };
 
 $(function(){
-    $Preview=$('#sortable'),
-    $Options=$('#options .block'),
+    var $Preview=$('#sortable'),
     $SetLabel=$('#setinput_label'),
     $SetName=$('#setinput_name'),
     $SetID=$('#setinput_id'),
@@ -35,7 +34,6 @@ $(function(){
     $SetDisabled=$('#setinput_disabled'),
     $SetRows=$('#setinput_rows'),
     $SetCols=$('#setinput_cols'),
-    $Popup=$('#popup'),
     $SetMaxLen=$('#setinput_maxlen'),
     $SetSize=$('#setinput_size'),
     $SetSliderMax=$('#setinput_range_max'),

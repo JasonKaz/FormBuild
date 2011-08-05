@@ -24,8 +24,7 @@
         if (Modernizr.inputtypes[i]==false)
             HasFalse=true
     }
-        
-    </script>   
+    </script>
 </head>
 <body>
     <div id="head_bg"></div>
@@ -106,7 +105,6 @@
                     <a href="javascript:void(0)" id="get_code">Get Code</a>
                 </div>
             </div>
-            
     	</div>
     </div>
     <div id="dialog" class="hidden"></div>
