@@ -2,21 +2,23 @@ var AvailInputs=["text","password","radio","checkbox","textarea","select"],
 Inputs=[],
 Order=[],
 Selected=null;
+//TODO: Create required attr
+//TODO: Finish auto complete, required inputs
 
-var Attributes=["id","name","disabled","mex_len","size","auto_complete","value","checked","cols","rows","number_min","number_max","number_value","number_step","range_min","range_max","range_step"],
+var Attributes=["id","name","disabled","max_len","size","autocomplete","value","checked","cols","rows","number_min","number_max","number_value","number_step","range_min","range_max","range_step","placeholder","required","autofocus"],
 InputAttributes={
-    text : ["id","name","disabled","max_len","size","auto_complete","value"],
-    password : ["id","name","disabled","max_len","size","auto_complete","value"],
-    radio : ["id","name","disabled","checked","value"],
-    checkbox : ["id","name","disabled","checked","value"],
-    textarea : ["id","name","disabled","cols","rows"],
-    select : ["id","name","disabled"],
-    search : ["id","name","disabled","auto_complete"],
-    tel : ["id","name","disabled","auto_complete"],
-    url : ["id","name","disabled","auto_complete"],
-    email : ["id","name","disabled","auto_complete"],
-    number : ["id","name","number_min","number_max","number_step","number_value"],
-    range : ["id","name","range_min","range_max","range_step"],
+    text : ["id","name","disabled","max_len","size","autocomplete","value","placeholder","required"],
+    password : ["id","name","disabled","max_len","size","autocomplete","value","placeholder","required"],
+    radio : ["id","name","disabled","checked","value","required"],
+    checkbox : ["id","name","disabled","checked","value","required"],
+    textarea : ["id","name","disabled","cols","rows","required"],
+    select : ["id","name","disabled","required"],
+    search : ["id","name","disabled","autocomplete","placeholder"],
+    tel : ["id","name","disabled","autocomplete","placeholder"],
+    url : ["id","name","disabled","autocomplete","placeholder"],
+    email : ["id","name","disabled","autocomplete","placeholder"],
+    number : ["id","name","number_min","number_max","number_step","number_value","disabled"],
+    range : ["id","name","range_min","range_max","range_step","value","disabled"],
     color : ["id","name","value"],
     date : ["id","name","extrainfo"],
     time : ["id","name","extrainfo"],
@@ -46,11 +48,25 @@ $(function(){
     $SetNumberMin=$('#setinput_number_min'),
     $SetNumberMax=$('#setinput_number_max'),
     $SetNumberStep=$('#setinput_number_step'),
-    $SetNumberVal=$('#setinput_number_val');
+    $SetNumberVal=$('#setinput_number_val'),
+    $SetPlaceholder=$('#setinput_placeholder'),
+    $SetRequired=$('#setinput_required'),
+    $SetFormRequiredtext=$('#form_requiredtext');
+
+    function check_required(){
+        for(var i in Inputs){
+            if (Inputs[i].Required){
+                $('#form_requiredtext_div').slideDown();
+                return;
+            }
+        }
+
+        $('#form_requiredtext_div').slideUp();
+    }
     
     $('#sortable').sortable({
         delay: 200,
-        update: function(ev,ui){
+        update: function(){
             Order=[];
             var ids=$(this).sortable('toArray');
 
@@ -61,7 +77,7 @@ $(function(){
     
     function Input(Type, JQ_Replacement){
         this.InputID=Inputs.length;
-        this.UseJQ=JQ_Replacement!=null?true:false;
+        this.UseJQ=JQ_Replacement;
         
         Order.push(this.InputID);
         
@@ -72,6 +88,7 @@ $(function(){
         this.Name="";
         this.Required=false;
         this.AutoComplete=true;
+        this.Placeholder="";
         
         //Text/Password
         this.MaxLen=null;
@@ -118,6 +135,8 @@ $(function(){
                 code+=this.getsizehtml();
                 code+=this.getautocompletehtml();
                 code+=this.getdisabledhtml();
+                code+=this.getplaceholderhtml();
+                code+=this.getrequiredhtml();
                 break;
                 
                 case "textarea":
@@ -125,6 +144,7 @@ $(function(){
                 code+=this.getnamehtml();
                 code+=this.getidhtml();
                 code+=this.getdisabledhtml();
+                code+=this.getrequiredhtml();
                 if (this.Cols!=0)code+=' cols="'+this.Cols+'"';
                 if (this.Rows!=0)code+=' rows="'+this.Rows+'"';
                 code+='></textarea>';
@@ -138,6 +158,7 @@ $(function(){
                 code+=this.getvaluehtml();
                 code+=this.getdisabledhtml();
                 code+=this.getcheckedhtml();
+                code+=this.getrequiredhtml();
                 break;
                 
                 case "select":
@@ -145,6 +166,7 @@ $(function(){
                 code+=this.getnamehtml();
                 code+=this.getidhtml();
                 code+=this.getdisabledhtml();
+                code+=this.getrequiredhtml();
                 code+='></select>';
                 break;
                 
@@ -162,7 +184,7 @@ $(function(){
         };
         
         this.getcheckedhtml=function(){
-            return this.Checked==true?' checked="checked"':'';
+            return this.Checked?' checked="checked"':'';
         };
         
         this.getlabelhtml=function(){
@@ -170,7 +192,10 @@ $(function(){
             if (this.Label){
                 code+='<label';
                 if (this.ID)code+=' for="'+this.ID+'"';
-                code+='>'+this.Label+'</label> ';
+                code+='>'+this.Label;
+                if (this.Required)
+                    code+=$('#form_requiredtext').val();
+                code+='</label> ';
             }
             
             return code;
@@ -185,7 +210,6 @@ $(function(){
         };
         
         this.getvaluehtml=function(){
-            //return this.Value||''
             return this.Value?' value="'+this.Value+'"':'';
         };
         
@@ -198,11 +222,19 @@ $(function(){
         };
         
         this.getautocompletehtml=function(){
-            return this.AutoComplete?' autocomplete="off"':'';
+            return !this.AutoComplete?' autocomplete="off"':'';
         };
         
         this.getdisabledhtml=function(){
-            return this.Disabled?' disabled="true"':'';
+            return this.Disabled?' disabled="disabled"':'';
+        };
+
+        this.getplaceholderhtml=function(){
+            return this.Placeholder?' placeholder="'+this.Placeholder+'"':'';
+        };
+
+        this.getrequiredhtml=function(){
+            return this.Required?' required="required"':'';
         };
         
         this.name=function(Name){
@@ -220,17 +252,27 @@ $(function(){
         
         this.checked=function(Checked){
             this.Checked=Checked;
-            $('#input_'+this.InputID).attr('checked',Checked);
+            $('#input_'+this.InputID).prop('checked',Checked);
         };
         
         this.disabled=function(Disabled){
             this.Disabled=Disabled;
-            if (this.UseJQ){
+            if (this.UseJQ && this.Type!="number"){
                 if (this.Type=="range")
                     this.Slider.slider({disabled:Disabled});
             }else{
-                $('#input_'+this.InputID).attr('disabled',Disabled);
+                $('#input_'+this.InputID).prop('disabled',Disabled);
             }
+        };
+
+        this.required=function(Required){
+            this.Required=Required;
+            $('#input_'+this.InputID).attr('required',Required);
+            if (Required)
+                $('#input_label_'+this.InputID).append($('#form_requiredtext').val());
+            else
+                $('#input_label_'+this.InputID).html(this.Label);
+            check_required();
         };
         
         this.rows=function(Rows){
@@ -294,8 +336,7 @@ $(function(){
         
         this.autocomplete=function(Auto){
             this.AutoComplete=Auto;
-            Auto=Auto?'on':'off';
-            $('#input_'+this.InputID).attr('autocomplete',Auto);
+            $('#input_'+this.InputID).prop('autocomplete',Auto);
         };
         
         this.numbermin=function(Min){
@@ -317,6 +358,11 @@ $(function(){
             this.NumberVal=Val;
             $('#input_'+this.InputID).attr('value',Val);
         };
+
+        this.placeholder=function(Text){
+            this.Placeholder=Text;
+            $('#input_'+this.InputID).attr('placeholder',Text);
+        };
     }
     
     //Add input into preview div
@@ -326,7 +372,7 @@ $(function(){
         switch (Input.Type){
             case "range":
             if (Input.UseJQ)
-                html+='<div id="input_'+Input.InputID+'"></div>';
+                html+='<div style="width:80%;display:inline-table;margin-left:10px"><div id="input_'+Input.InputID+'"></div></div>';
             else
                 html+='<input type="range" id="input_'+Input.InputID+'" />';
             break;
@@ -334,7 +380,7 @@ $(function(){
             case "number":
             Input.Value=0;
             if (Input.UseJQ)
-                html+='<div class="input_number" style="overflow:auto"><input type="text" id="input_'+Input.InputID+'" value="0" style="float:left" /><div style="line-height:10px"><a href="javascript:void(0)" class="plus" style="text-decoration:none">+</a><br /><a href="javascript:void(0)" class="minus" style="text-decoration:none">-</a></div></div>';
+                html+='<div style="display:inline-table"><div class="input_number"><input type="text" id="input_'+Input.InputID+'" value="0" /><div style="line-height:10px;float:right;"><a href="javascript:void(0)" class="plus" style="text-decoration:none">+</a><br /><a href="javascript:void(0)" class="minus" style="text-decoration:none">-</a></div></div></div>';
             else
                 html+='<input type="number" id="input_'+Input.InputID+'" />';
             break;
@@ -446,7 +492,7 @@ $(function(){
         return this.push.apply(this, rest);
     };
     
-    //Remove input
+    //Remove input handler
     $('.opt a').live('click',function(e){
         e.stopPropagation();
         var id=$(this).data('id');
@@ -499,10 +545,11 @@ $(function(){
         $('#setinput_label_div').slideDown();
         $('.input_preview').css('border','');
         $('#input_div_'+Selected).css('border','1px dotted #9ED738');
-        
-        if (me.AutoComplete)$SetAutoComplete.prop('checked',true); else $SetAutoComplete.prop('checked',false);
-        if (me.Checked)$SetChecked.prop('checked',true);else $SetChecked.prop('checked',false);
-        if (me.Disabled)$SetDisabled.prop('checked',true);else $SetDisabled.prop('checked',false);
+
+        $SetAutoComplete.prop('checked',me.AutoComplete);
+        $SetChecked.prop('checked',me.Checked);
+        $SetDisabled.prop('checked',me.Disabled);
+        $SetRequired.prop('checked',me.Required);
         
         $SetSliderMin.val(me.SliderMin);
         $SetSliderMax.val(me.SliderMax);
@@ -514,9 +561,9 @@ $(function(){
         
         for(var i in Attributes){
             if (InputAttributes[me.Type].indexOf(Attributes[i])!=-1){
-                $('#setinput_'+Attributes[i]+'_div').slideDown(); 
+                $('#setinput_'+Attributes[i]+'_div').slideDown();
             }else{
-                 $('#setinput_'+Attributes[i]+'_div').slideUp();
+                $('#setinput_'+Attributes[i]+'_div').slideUp();
             }
         }
         
@@ -534,21 +581,18 @@ $(function(){
             $('#setinput_extrainfo_div').slideUp();
         }
     }).live('mouseover mouseout',function(ev){
-        if (ev.type=="mouseover"){
+        if (ev.type=="mouseover")
             $(this).children('.opt').fadeIn();
-        }else{
+        else
             $(this).children('.opt').fadeOut();
-        }
         ev.stopPropagation();
     });
     
     //Code generation handler
     $('#get_code').click(function(){
         var code='<form method="'+$('#form_method').val()+'" action="'+$('#form_action').val()+'">\n',
-        Req=[],
-        js="",
-        me;
-        for (var i=0;i<Inputs.length;i++){
+        Req=[],t="",js="",me,b,i,hasNumber=false;
+        for (i=0;i<Inputs.length;i++){
             me=Inputs[Order[i]];
             
             if (me.Type=="range"){
@@ -556,32 +600,32 @@ $(function(){
                 
                 if (me.UseJQ){
                     Req.push("jQuery UI Slider (http://jqueryui.com/download)");
-                    code+='<div'+me.getidhtml();
+                    code+='<div style="width:80%;display:inline-table;margin-left:10px"><div'+me.getidhtml();
                     js+='$("#'+me.ID+'").slider(';
-                    var b=me.SliderMin!=0 || me.SliderMax!=100 ||  me.SliderStep!=1 || me.SliderAnim!=false;                    
+                    b=me.SliderMin!=0 || me.SliderMax!=100 ||  me.SliderStep!=1 || me.SliderAnim!=false || me.Value || me.Disabled;
                     if (b){
-                        var t='';
+                        t='';
                         js+='{';
                         
                         if(me.SliderMin!=0) t+='\n     min : '+me.SliderMin+',';
                         if(me.SliderMax!=100)t+='\n     max : '+me.SliderMax+',';
                         if(me.SliderStep!=1)t+='\n     step : '+me.SliderStep+',';
-                        if(me.SliderValue)t+='\n     value : '+me.Value+',';
+                        if(me.Value)t+='\n     value : '+me.Value+',';
                         if(me.SliderAnim!=false)t+='\n    animate : true,';
+                        if(me.Disabled)t+='\n    disabled : true,';
                         js+=t.substr(0,t.length-1)+'\n';
+                        js+='}';
                     }
                     
-                    code+="></div>";
+                    code+="></div></div>";
                     js+=');\n\n';
                 }else{
                     code+='<input type="range"';
-                    code+=me.getidhtml();
-                    code+=me.getnamehtml();
-                    code+=me.getdisabledhtml();
+                    code+=me.getidhtml()+me.getnamehtml()+me.getdisabledhtml();
                     if(me.SliderMin!=0)code+=' min="'+me.SliderMin+'"';
                     if(me.SliderMax!=100)code+=' max="'+me.SliderMax+'"';
                     if(me.SliderStep!=1)code+=' step="'+me.SliderStep+'"';
-                    if(me.SliderValue)code+=' value="'+me.SliderValue+'"';
+                    if(me.Value)code+=' value="'+me.Value+'"';
                     code+=' />';
                 }
                 
@@ -590,17 +634,19 @@ $(function(){
                 code+='    <div>'+me.getlabelhtml();
                 
                 if (me.UseJQ){
-                    //js+='var $'+me.ID+'=$("#'+me.ID+'")';
-                    js+='\n\n$(".plus").click(function(){\n    var $input=$("#"+$(this).data("input"));\n    if (parseFloat($input.val())+$input.data("step")<=$input.data("max"))\n        $input.val(parseFloat($input.val()) + $input.data("step"));\n});\n';
-                    js+='\n\n$(".minus").click(function(){\n    var $input=$("#"+$(this).data("input"));\n    if (parseFloat($input.val())-$input.data("step")>=$input.data("min"))\n        $input.val(parseFloat($input.val()) - $input.data("step"));\n});\n\n';
-                    
-                    code+='<div class="input_number" style="overflow:auto"><input type="text"';
+                    if (!hasNumber){
+                        js+='$(".plus").click(function(){\n    var $input=$("#"+$(this).data("input"));\n    if (parseFloat($input.val())+$input.data("step")<=$input.data("max") && !$input.prop("disabled"))\n        $input.val(parseFloat($input.val()) + $input.data("step"));\n});\n\n';
+                        js+='$(".minus").click(function(){\n    var $input=$("#"+$(this).data("input"));\n    if (parseFloat($input.val())-$input.data("step")>=$input.data("min") && !$input.prop("disabled"))\n        $input.val(parseFloat($input.val()) - $input.data("step"));\n});\n\n';
+                    }
+                    code+='<div style="display:inline-table"><div class="input_number"><input type="text"';
                     code+=me.getidhtml()+me.getnamehtml()+me.getdisabledhtml()+me.getautocompletehtml();
-                    code+=' value="'+me.NumberVal+'" data-min="'+me.NumberMin+'" data-max="'+me.NumberMax+'" data-step="'+me.NumberStep+'" style="float:left" /><div class="line-height:10px"><a href="javascript:void(0)" class="plus" style="text-decoration:none;font-size:10px"';
+                    code+=' value="'+me.NumberVal+'" data-min="'+me.NumberMin+'" data-max="'+me.NumberMax+'" data-step="'+me.NumberStep+'" /><div class="line-height:10px;float:right"><a href="javascript:void(0)" class="plus" style="text-decoration:none;font-size:10px"';
                     if (me.ID)code+=' data-input="'+me.ID+'"';
+                    if (me.Disabled)code+=' disabled="disabled"';
                     code+='>+</a><br /><a href="javascript:void(0)" class="minus" style="text-decoration:none;font-size:10px"';
                     if (me.ID)code+=' data-input="'+me.ID+'"';
-                    code+='>-</a></div></div>';
+                    code+='>-</a></div></div></div>';
+                    hasNumber=true;
                 }else{
                     code+='<input type="number"';
                     code+=me.getidhtml()+me.getnamehtml()+me.getdisabledhtml()+me.getautocompletehtml();
@@ -617,9 +663,9 @@ $(function(){
                 if (me.UseJQ){
                     Req.push('ColorPicker Plugin (http://www.eyecon.ro/colorpicker/)');
                     code+='<div id="'+me.ID+'" class="colpick"><div style="background-color:'+me.Value+';"></div></div>';
-                    js+='$("#'+me.ID+'").ColorPicker({\n    color: "'+me.Value+'",\n    onBeforeShow:function(colpkr){\n        if ($(colpkr).is(":hidden"))\n            $(colpkr).fadeIn(500);\n            return false;\n    },\n    onHide:function(colpkr){\n        $(colpkr).fadeOut(500);\n        return false;\n    },\n    onChange:function(hsb, hex, rgb){\n        $("#'+me.ID+' div").css("background-color", "#" + hex);\n    }\n});\n\n';
+                    js+='$("#'+me.ID+'").ColorPicker({\n    color: "'+me.Value+'",\n    onBeforeShow:function(colpkr){\n        if ($(colpkr).is(":hidden"))\n            $(colpkr).fadeIn(500);\n        return false;\n    },\n    onHide:function(colpkr){\n        $(colpkr).fadeOut(500);\n        return false;\n    },\n    onChange:function(hsb, hex, rgb){\n        $("#'+me.ID+' div").css("background-color", "#" + hex);\n    }\n});\n\n';
                     
-                    var b=me.Value!="#FFFFFF"
+                    b=me.Value!="#FFFFFF"
                 }else{
                     code+='<input type="color"';
                     code+=me.getidhtml()+me.getnamehtml()+me.getdisabledhtml()+me.getautocompletehtml();
@@ -660,10 +706,11 @@ $(function(){
         }
         
         code+="</form>";
-        
+
         if (Req.length){
-            var t="//Requirements:\n";
-            for (var i in Req){
+            console.log(1);
+            t="//Requirements:\n";
+            for (i in Req){
                 if (typeof Req[i]!="function")
                     t+='//'+Req[i]+'\n';
             }
@@ -671,9 +718,17 @@ $(function(){
             t=t.substr(0,t.length-1)+'\n\n';
             js=t+js;
         }
-        
+
         $('#html').val(code);
-        $('#js').css('display',((js=='')?'none':'block')).val(js);
+        $('#html_div').slideDown();
+
+        if (js!=''){
+            $('#js_div').slideDown();
+            $('#js').val(js);
+        }else{
+            $('#js_div').slideUp();
+            $('#js').val('');
+        }
         $('#code').slideDown();
     });
     
@@ -752,6 +807,22 @@ $(function(){
     
     $SetNumberVal.change(function(){
         Inputs[Selected].numberval($(this).val()); 
+    });
+
+    $SetPlaceholder.keyup(function(){
+        Inputs[Selected].placeholder($(this).val()); 
+    });
+
+    $SetRequired.change(function(){
+        Inputs[Selected].required($(this).prop('checked')); 
+    });
+
+    $SetFormRequiredtext.keyup(function(){
+        for(var i in Inputs){
+            if (Inputs[i].Required){
+                $('#input_label_'+Inputs[i].InputID).html(Inputs[i].Label+$(this).val());
+            }
+        }
     });
 
     $('.info').click(function(){

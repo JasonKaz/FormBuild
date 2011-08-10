@@ -21,7 +21,7 @@
     HasFalse=false;
     for(var i in Modernizr.inputtypes){
         InputList.push([i,Modernizr.inputtypes[i]]);
-        if (Modernizr.inputtypes[i]==false)
+        if (!Modernizr.inputtypes[i])
             HasFalse=true
     }
     </script>
@@ -43,14 +43,14 @@
                     document.write('<a href="javascript:void(0)" id="'+AvailInputs[i]+'" class="add">'+AvailInputs[i]+'</a><br />');
                 }
                 for(var i in InputList){
-                    if (InputList[i][1]==true)
+                    if (InputList[i][1])
                         document.write('<a href="javascript:void(0)" id="'+InputList[i][0]+'" class="add">'+InputList[i][0]+'</a><br />');
                 }
                 
                 if (HasFalse){
                     document.write('<h3>Not Supported</h3> <img src="images/q.png" class="info" data-text="These inputs are <strong><em>not</em></strong> implemented into your current browser, but maybe others. <em>Some have JavaScript replacements though.</em> <br />Check <a href=\'http://www.quirksmode.org/html5/inputs.html\' target=\'_blank\'>QuirksMode.com</a> to see what browsers do support these inputs." /><br /><div id="unsupported_inputs">');
                     for(var i in InputList){
-                        if (InputList[i][1]==false)
+                        if (!InputList[i][1])
                             document.write('<a href="javascript:void(0)" id="'+InputList[i][0]+'" class="add">'+InputList[i][0]+'</a><br />');
                     }
                     document.write('</div>');
@@ -61,16 +61,18 @@
             <div id="preview">
                 <h1>Form Preview</h1>
                 <div class="block" id="form" style="padding: 5px;">
-                <ul id="sortable">
-                
-                </ul>
+                <ul id="sortable"></ul>
                 </div>
                 <br />
                 <div class="block hidden" id="code">
-                    <h2>JavaScript</h2>
-                    <textarea cols="59" rows="10" id="js"></textarea>
-                    <h2>Markup</h2>
-                    <textarea cols="59" rows="10" id="html"></textarea>
+                    <div id="js_div" class="hidden">
+                        <h2><label for="js">JavaScript</label></h2>
+                        <textarea cols="59" rows="10" id="js"></textarea>
+                    </div>
+                    <div id="html_div"  class="hidden">
+                        <h2><label for="html">Markup</label></h2>
+                        <textarea cols="59" rows="10" id="html"></textarea>
+                    </div>
                 </div>
             </div>
             <div id="options" class="">
@@ -78,18 +80,21 @@
                 <div class="block" id="attr">
                     <h2>Form Attributes</h2>
                     <div><label for="form_method">Method</label> <select id="form_method"><option selected>POST</option><option>GET</option><option>REQUEST</option></select></div>
-                    <div><label for="form_action">Action</label> <input type="text" id="form_action" /></div>
-                    <br /><br />
+                    <div><label for="form_action">Action</label> <input type="text" id="form_action" size="9" /></div>
+                    <div id="form_requiredtext_div" class="hidden"><label for="form_requiredtext">Req Text</label> <input type="text" id="form_requiredtext" value="*" size="9" /></div>
+                    <br />
                     <h2>Input Attributes</h2>
                     <div id="setinput_label_div" class="hidden"><label for="setinput_label">Label</label> <input type="text" id="setinput_label" /></div>
-                    <div id="setinput_id_div" class="hidden"><label for="setinput_id">ID</label> <input type="text" id="setinput_id" /></div>
-                    <div id="setinput_name_div" class="hidden"><label for="setinput_name">Name</label> <input type="text" id="setinput_name" /></div>
+                    <div id="setinput_id_div" class="hidden"><label for="setinput_id">ID<img src="images/q.png" class="info" data-text="This attribute is required for any jQuery replacement." /></label> <input type="text" id="setinput_id" /></div>
+                    <div id="setinput_name_div" class="hidden"><label for="setinput_name">Name<img src="images/q.png" class="info" data-text="This attribute is required for any data being submitted through a form." /></label> <input type="text" id="setinput_name" /></div>
                     <div id="setinput_disabled_div" class="hidden"><label for="setinput_disabled">Disabled</label> <input type="checkbox" id="setinput_disabled" /></div>
+                    <div id="setinput_placeholder_div" class="hidden"><label for="setinput_placeholder">Pholder<img src="images/q.png" class="info" data-text="This attribute only works in newer browsers, but will not remove any features from older browsers. There are JavaScript replacements for this type of attribute for older browser versions." /></label> <input type="text" id="setinput_placeholder" /></div>
                     <div id="setinput_max_len_div" class="hidden"><label for="setinput_maxlen">Max Len</label> <input type="text" id="setinput_maxlen" size="3" /></div>
-                    <div id="setinput_size_div" class="hidden"><label for="setinput_size">Size</label> <input type="text" id="setinput_size" size="3" /></div>
+                    <div id="setinput_size_div" class="hidden"><label for="setinput_size">Size<img src="images/q.png" class="info" data-text="This attribute sets how may characters wide the input will be, <b>not</b> the maximum amount of characters." /></label> <input type="text" id="setinput_size" size="3" /></div>
                     <div id="setinput_checked_div" class="hidden"><label for="setinput_checked">Checked</label> <input type="checkbox" id="setinput_checked" /></div>
+                    <div id="setinput_required_div" class="hidden"><label for="setinput_required">Required</label> <input type="checkbox" id="setinput_required" /></div>
                     <div id="setinput_autocomplete_div" class="hidden"><label for="setinput_autocomplete">Auto Complete</label> <input type="checkbox" id="setinput_autocomplete" /></div>
-                    <div id="setinput_value_div" class="hidden"><label for="setinput_value">Value</label> <input type="text" id="setinput_value" size="8" /></div>
+                    <div id="setinput_value_div" class="hidden"><label for="setinput_value">Value<img src="images/q.png" class="info" data-text="The default value for the input when a page loads. When autocomplete is <b>on</b>, the saved value for that input will override the default value." /></label> <input type="text" id="setinput_value" size="8" /></div>
                     <div id="setinput_cols_div" class="hidden"><label for="setinput_cols">Columns</label> <input type="text" id="setinput_cols" size="3" /></div>
                     <div id="setinput_rows_div" class="hidden"><label for="setinput_rows">Rows</label> <input type="text" id="setinput_rows" size="3" /></div>
                     <div id="setinput_range_min_div" class="hidden"><label for="setinput_range_min">Min</label> <input type="text" id="setinput_range_min" size="3" /></div>
