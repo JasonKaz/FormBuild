@@ -2,30 +2,36 @@ var AvailInputs=["text","password","radio","checkbox","textarea","select"],
 Inputs=[],
 Order=[],
 Selected=null;
-//TODO: Create required attr
-//TODO: Finish auto complete, required inputs
+//TODO: Finish auto complete attribute
+//TODO: Add multiple, autofocus, readonly attributes
+//TODO: Add inputs: button, submit, reset, file
+//TODO: Support date inputs (min, max, step)
 
-var Attributes=["id","name","disabled","max_len","size","autocomplete","value","checked","cols","rows","number_min","number_max","number_value","number_step","range_min","range_max","range_step","placeholder","required","autofocus"],
+var Attributes=["id","name","disabled","max_len","size","autocomplete","value","checked","cols","rows","number_min","number_max","number_value","number_step","range_min","range_max","range_step","placeholder","required","autofocus","readonly","multiple"],
 InputAttributes={
-    text : ["id","name","disabled","max_len","size","autocomplete","value","placeholder","required"],
-    password : ["id","name","disabled","max_len","size","autocomplete","value","placeholder","required"],
-    radio : ["id","name","disabled","checked","value","required"],
-    checkbox : ["id","name","disabled","checked","value","required"],
-    textarea : ["id","name","disabled","cols","rows","required"],
-    select : ["id","name","disabled","required"],
-    search : ["id","name","disabled","autocomplete","placeholder"],
-    tel : ["id","name","disabled","autocomplete","placeholder"],
-    url : ["id","name","disabled","autocomplete","placeholder"],
-    email : ["id","name","disabled","autocomplete","placeholder"],
-    number : ["id","name","number_min","number_max","number_step","number_value","disabled"],
-    range : ["id","name","range_min","range_max","range_step","value","disabled"],
-    color : ["id","name","value"],
-    date : ["id","name","extrainfo"],
-    time : ["id","name","extrainfo"],
-    datetime : ["id","name"],
-    month : ["id","name"],
-    week : ["id","name"],
-    "datetime-local" : ["id","name"]
+    text : ["id","name","disabled","max_len","size","autocomplete","value","placeholder","required","autofocus","readonly"],
+    password : ["id","name","disabled","max_len","size","autocomplete","value","placeholder","required","readonly","autofocus"],
+    radio : ["id","name","disabled","checked","value","required","autofocus"],
+    checkbox : ["id","name","disabled","checked","value","required","autofocus"],
+    textarea : ["id","name","disabled","cols","rows","readonly","max_len","autofocus","required","placeholder"],
+    select : ["id","name","disabled","required","size","multiple","autofocus"],
+    search : ["id","name","disabled","autocomplete","placeholder","size","required","max_len","autofocus","max_len","readonly","value"],
+    tel : ["id","name","disabled","autocomplete","placeholder","size","required","value","max_len","autofocus","max_len","readonly"],
+    url : ["id","name","disabled","autocomplete","placeholder","required","max_len","autofocus","max_len","readonly","size","value"],
+    email : ["id","name","disabled","autocomplete","placeholder","required","autofocus","max_len","readonly","size","value","multiple"],
+    number : ["id","name","number_min","number_max","number_step","number_value","disabled","required","readonly"],
+    range : ["id","name","range_min","range_max","range_step","value","disabled","autofocus"],
+    color : ["id","name","value","autocomplete","autofocus"],
+    date : ["id","name","extrainfo","required","disabled","autocomplete","autofocus","readonly","value"],
+    time : ["id","name","extrainfo","required"],
+    datetime : ["id","name","required","disabled","autocomplete","autofocus","readonly","value"],
+    month : ["id","name","required","disabled","autocomplete","autofocus","readonly","value"],
+    week : ["id","name","required","disabled","autocomplete","autofocus","readonly","value"],
+    "datetime-local" : ["id","name","required","disabled","autocomplete","autofocus","readonly","value"],
+    button : ["id","name","disabled","value","autofocus"],
+    submit : ["id","name","disabled","value","autofocus"],
+    reset : ["id","name","disabled","value","autofocus"],
+    file : ["id","name","disabled","autofocus","required","multiple"]
 };
 
 $(function(){
