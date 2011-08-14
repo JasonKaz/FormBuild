@@ -94,6 +94,9 @@
                     <div id="setinput_checked_div" class="hidden"><label for="setinput_checked">Checked</label> <input type="checkbox" id="setinput_checked" /></div>
                     <div id="setinput_required_div" class="hidden"><label for="setinput_required">Required</label> <input type="checkbox" id="setinput_required" /></div>
                     <div id="setinput_autocomplete_div" class="hidden"><label for="setinput_autocomplete">Auto Complete</label> <input type="checkbox" id="setinput_autocomplete" /></div>
+                    <div id="setinput_autofocus_div" class="hidden"><label for="setinput_autofocus">Auto Focus</label> <input type="checkbox" id="setinput_autofocus" /></div>
+                    <div id="setinput_readonly_div" class="hidden"><label for="setinput_readonly">Readonly</label> <input type="checkbox" id="setinput_readonly" /></div>
+                    <div id="setinput_multiple_div" class="hidden"><label for="setinput_multiple">Multiple</label> <input type="checkbox" id="setinput_multiple" /></div>
                     <div id="setinput_value_div" class="hidden"><label for="setinput_value">Value<img src="images/q.png" class="info" data-text="The default value for the input when a page loads. When autocomplete is <b>on</b>, the saved value for that input will override the default value." /></label> <input type="text" id="setinput_value" size="8" /></div>
                     <div id="setinput_cols_div" class="hidden"><label for="setinput_cols">Columns</label> <input type="text" id="setinput_cols" size="3" /></div>
                     <div id="setinput_rows_div" class="hidden"><label for="setinput_rows">Rows</label> <input type="text" id="setinput_rows" size="3" /></div>

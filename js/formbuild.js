@@ -1,9 +1,7 @@
-var AvailInputs=["text","password","radio","checkbox","textarea","select"],
+var AvailInputs=["text","password","radio","checkbox","textarea","select","button","submit","reset","file"],
 Inputs=[],
 Order=[],
 Selected=null;
-//TODO: Finish auto complete attribute
-//TODO: Add multiple, autofocus, readonly attributes
 //TODO: Add inputs: button, submit, reset, file
 //TODO: Support date inputs (min, max, step)
 
@@ -19,11 +17,11 @@ InputAttributes={
     tel : ["id","name","disabled","autocomplete","placeholder","size","required","value","max_len","autofocus","max_len","readonly"],
     url : ["id","name","disabled","autocomplete","placeholder","required","max_len","autofocus","max_len","readonly","size","value"],
     email : ["id","name","disabled","autocomplete","placeholder","required","autofocus","max_len","readonly","size","value","multiple"],
-    number : ["id","name","number_min","number_max","number_step","number_value","disabled","required","readonly"],
+    number : ["id","name","number_min","number_max","number_step","number_value","disabled","required","readonly","autofocus"],
     range : ["id","name","range_min","range_max","range_step","value","disabled","autofocus"],
     color : ["id","name","value","autocomplete","autofocus"],
     date : ["id","name","extrainfo","required","disabled","autocomplete","autofocus","readonly","value"],
-    time : ["id","name","extrainfo","required"],
+    time : ["id","name","extrainfo","required","autofocus","readonly","disabled","autocomplete","value"],
     datetime : ["id","name","required","disabled","autocomplete","autofocus","readonly","value"],
     month : ["id","name","required","disabled","autocomplete","autofocus","readonly","value"],
     week : ["id","name","required","disabled","autocomplete","autofocus","readonly","value"],
@@ -57,7 +55,10 @@ $(function(){
     $SetNumberVal=$('#setinput_number_val'),
     $SetPlaceholder=$('#setinput_placeholder'),
     $SetRequired=$('#setinput_required'),
-    $SetFormRequiredtext=$('#form_requiredtext');
+    $SetFormRequiredtext=$('#form_requiredtext'),
+    $SetAutoFocus=$('#setinput_autofocus'),
+    $SetReadonly=$('#setinput_readonly'),
+    $SetMultiple=$('#setinput_multiple');
 
     function check_required(){
         for(var i in Inputs){
@@ -95,6 +96,9 @@ $(function(){
         this.Required=false;
         this.AutoComplete=true;
         this.Placeholder="";
+        this.AutoFocus=false;
+        this.Readonly=false;
+        this.Multiple=false;
         
         //Text/Password
         this.MaxLen=null;
@@ -133,6 +137,10 @@ $(function(){
             switch (this.Type){
                 case "text":
                 case "password":
+                case "search":
+                case "tel":
+                case "url":
+                case "email":
                 code+='<input type="'+this.Type+'"';
                 code+=this.getnamehtml();
                 code+=this.getidhtml();
@@ -143,6 +151,8 @@ $(function(){
                 code+=this.getdisabledhtml();
                 code+=this.getplaceholderhtml();
                 code+=this.getrequiredhtml();
+                code+=this.getautofocushtml();
+                code+=this.getreadonlyhtml();
                 break;
                 
                 case "textarea":
@@ -151,6 +161,10 @@ $(function(){
                 code+=this.getidhtml();
                 code+=this.getdisabledhtml();
                 code+=this.getrequiredhtml();
+                code+=this.getautocompletehtml();
+                code+=this.getmaxlenhtml();
+                code+=this.getautofocushtml();
+                code+=this.getreadonlyhtml();
                 if (this.Cols!=0)code+=' cols="'+this.Cols+'"';
                 if (this.Rows!=0)code+=' rows="'+this.Rows+'"';
                 code+='></textarea>';
@@ -165,6 +179,7 @@ $(function(){
                 code+=this.getdisabledhtml();
                 code+=this.getcheckedhtml();
                 code+=this.getrequiredhtml();
+                code+=this.getautofocushtml();
                 break;
                 
                 case "select":
@@ -173,17 +188,22 @@ $(function(){
                 code+=this.getidhtml();
                 code+=this.getdisabledhtml();
                 code+=this.getrequiredhtml();
+                code+=this.getsizehtml();
+                code+=this.getautofocushtml();
                 code+='></select>';
                 break;
-                
+                                
                 default:
                 code+='<input type="'+this.Type+'"';
             }
+
+            if (this.Type=="select" || this.Type=="file" || this.Type=="email")
+                code+=this.getmultiplehtml();
             
             if (this.Type!="textarea" && this.Type!="select")
                 code+=' />';
             
-            
+
             code+='</div>\n';
             
             return code;
@@ -242,6 +262,18 @@ $(function(){
         this.getrequiredhtml=function(){
             return this.Required?' required="required"':'';
         };
+
+        this.getautofocushtml=function(){
+            return this.AutoFocus?' autofocus="autofocus"':'';  
+        };
+
+        this.getreadonlyhtml=function(){
+            return this.Readonly?' readonly="readonly"':'';
+        };
+
+        this.getmultiplehtml=function(){
+            return this.Multiple?' multiple="multiple"':'';
+        };
         
         this.name=function(Name){
             this.Name=Name;
@@ -273,12 +305,26 @@ $(function(){
 
         this.required=function(Required){
             this.Required=Required;
-            $('#input_'+this.InputID).attr('required',Required);
+            $('#input_'+this.InputID).prop('required',Required);
             if (Required)
                 $('#input_label_'+this.InputID).append($('#form_requiredtext').val());
             else
                 $('#input_label_'+this.InputID).html(this.Label);
             check_required();
+        };
+
+        this.multiple=function(Mult){
+            this.Multiple=Mult;
+            $('#input_'+this.InputID).prop('multiple',Mult);
+        };
+
+        this.autofocus=function(Auto){
+            this.AutoFocus=Auto;
+        };
+
+        this.readonly=function(Readonly){
+            this.Readonly=Readonly;
+            $('#input_'+this.InputID).prop('readonly',Readonly);
         };
         
         this.rows=function(Rows){
@@ -556,6 +602,9 @@ $(function(){
         $SetChecked.prop('checked',me.Checked);
         $SetDisabled.prop('checked',me.Disabled);
         $SetRequired.prop('checked',me.Required);
+        $SetAutoFocus.prop('checked',me.AutoFocus);
+        $SetReadonly.prop('checked',me.Readonly);
+        $SetMultiple.prop('checked',me.Multiple);
         
         $SetSliderMin.val(me.SliderMin);
         $SetSliderMax.val(me.SliderMax);
@@ -627,7 +676,7 @@ $(function(){
                     js+=');\n\n';
                 }else{
                     code+='<input type="range"';
-                    code+=me.getidhtml()+me.getnamehtml()+me.getdisabledhtml();
+                    code+=me.getidhtml()+me.getnamehtml()+me.getdisabledhtml()+me.getautofocushtml();
                     if(me.SliderMin!=0)code+=' min="'+me.SliderMin+'"';
                     if(me.SliderMax!=100)code+=' max="'+me.SliderMax+'"';
                     if(me.SliderStep!=1)code+=' step="'+me.SliderStep+'"';
@@ -645,7 +694,7 @@ $(function(){
                         js+='$(".minus").click(function(){\n    var $input=$("#"+$(this).data("input"));\n    if (parseFloat($input.val())-$input.data("step")>=$input.data("min") && !$input.prop("disabled"))\n        $input.val(parseFloat($input.val()) - $input.data("step"));\n});\n\n';
                     }
                     code+='<div style="display:inline-table"><div class="input_number"><input type="text"';
-                    code+=me.getidhtml()+me.getnamehtml()+me.getdisabledhtml()+me.getautocompletehtml();
+                    code+=me.getidhtml()+me.getnamehtml()+me.getdisabledhtml()+me.getautocompletehtml()+me.getautofocushtml()+me.getreadonlyhtml();
                     code+=' value="'+me.NumberVal+'" data-min="'+me.NumberMin+'" data-max="'+me.NumberMax+'" data-step="'+me.NumberStep+'" /><div class="line-height:10px;float:right"><a href="javascript:void(0)" class="plus" style="text-decoration:none;font-size:10px"';
                     if (me.ID)code+=' data-input="'+me.ID+'"';
                     if (me.Disabled)code+=' disabled="disabled"';
@@ -655,7 +704,7 @@ $(function(){
                     hasNumber=true;
                 }else{
                     code+='<input type="number"';
-                    code+=me.getidhtml()+me.getnamehtml()+me.getdisabledhtml()+me.getautocompletehtml();
+                    code+=me.getidhtml()+me.getnamehtml()+me.getdisabledhtml()+me.getautocompletehtml()+me.getautofocushtml()+me.getreadonlyhtml();
                     if (me.NumberMin!=0)code+=' min="'+me.NumberMin+'"';
                     if (me.NumberMax!=100)code+=' max="'+me.NumberMax+'"';
                     if (me.NumberStep!=1)code+=' step="'+me.NumberStep+'"';
@@ -674,7 +723,7 @@ $(function(){
                     b=me.Value!="#FFFFFF"
                 }else{
                     code+='<input type="color"';
-                    code+=me.getidhtml()+me.getnamehtml()+me.getdisabledhtml()+me.getautocompletehtml();
+                    code+=me.getidhtml()+me.getnamehtml()+me.getdisabledhtml()+me.getautocompletehtml()+me.getautofocushtml();
                     if (me.Value)code+=' value="'+me.Value+'"';
                     code+=' />';
                 }
@@ -685,11 +734,11 @@ $(function(){
                     Req.push('jQuery UI Datepicker (http://jqueryui.com/download)');
                     js+='$("#'+me.ID+'").datepicker();\n\n';
                     code+='<input type="text"';
-                    code+=me.getidhtml()+me.getnamehtml();
+                    code+=me.getidhtml()+me.getnamehtml()+me.getautofocushtml()+me.getautocompletehtml()+me.getdisabledhtml()+me.getreadonlyhtml();
                     code+=' />\n';
                 }else{
                     code+='<input type="date"';
-                    code+=me.getidhtml()+me.getnamehtml();
+                    code+=me.getidhtml()+me.getnamehtml()+me.getautofocushtml()+me.getautocompletehtml()+me.getdisabledhtml()+me.getreadonlyhtml();
                     code+=' />\n';
                 }
             }else if (me.Type=="time"){
@@ -699,11 +748,11 @@ $(function(){
                     Req.push('Timepicker Plugin (http://fgelinas.com/code/timepicker/#requirements)');
                     js+='$("#'+me.ID+'").timepicker();\n\n';
                     code+='<input type="text"';
-                    code+=me.getidhtml()+me.getnamehtml();
+                    code+=me.getidhtml()+me.getnamehtml()+me.getautofocushtml()+me.getautocompletehtml()+me.getdisabledhtml()+me.getreadonlyhtml();
                     code+=' />\n';
                 }else{
                     code+='<input type="time"';
-                    code+=me.getidhtml()+me.getnamehtml();
+                    code+=me.getidhtml()+me.getnamehtml()+me.getautofocushtml()+me.getautocompletehtml()+me.getdisabledhtml()+me.getreadonlyhtml();
                     code+=' />\n';
                 }
             }else{
@@ -829,6 +878,18 @@ $(function(){
                 $('#input_label_'+Inputs[i].InputID).html(Inputs[i].Label+$(this).val());
             }
         }
+    });
+
+    $SetAutoFocus.change(function(){
+        Inputs[Selected].autofocus($(this).prop('checked'));
+    });
+
+    $SetReadonly.change(function(){
+        Inputs[Selected].readonly($(this).prop('checked')); 
+    });
+
+    $SetMultiple.change(function(){
+        Inputs[Selected].multiple($(this).prop('checked'));
     });
 
     $('.info').click(function(){
