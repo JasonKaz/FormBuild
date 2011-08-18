@@ -2,6 +2,7 @@ var AvailInputs=["text","password","radio","checkbox","textarea","select","butto
 Inputs=[],
 Order=[],
 Selected=null;
+//TODO: Add progress element
 //TODO: Support date inputs (min, max, step)
 //TODO: Add contenteditiable? http://dev.w3.org/html5/markup/global-attributes.html
 
@@ -193,7 +194,18 @@ $(function(){
                 code+=this.getautofocushtml();
                 code+='></select>';
                 break;
-                                
+
+                case "reset":
+                case "button":
+                case "submit":
+                code+='<input type="'+this.Type+'"';
+                code+=this.getnamehtml();
+                code+=this.getidhtml();
+                code+=this.getdisabledhtml();
+                code+=this.getautofocushtml();
+                code+=this.getvaluehtml();
+                break;
+
                 default:
                 code+='<input type="'+this.Type+'"';
             }
