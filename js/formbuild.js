@@ -1,8 +1,8 @@
-var AvailInputs=["text","password","radio","checkbox","textarea","select","button","submit","reset","file"],
+var AvailInputs=["text","password","radio","checkbox","textarea","select","button","submit","reset","file","progress"],
 Inputs=[],
 Order=[],
 Selected=null;
-//TODO: Add progress element
+//TODO: Add progress element jQuery Replacement
 //TODO: Support date inputs (min, max, step)
 //TODO: Add contenteditiable? http://dev.w3.org/html5/markup/global-attributes.html
 
@@ -30,7 +30,8 @@ InputAttributes={
     button : ["id","name","disabled","value","autofocus"],
     submit : ["id","name","disabled","value","autofocus"],
     reset : ["id","name","disabled","value","autofocus"],
-    file : ["label","id","name","disabled","autofocus","required","multiple"]
+    file : ["label","id","name","disabled","autofocus","required","multiple"],
+    progress : ["label","id","value","number_max"]
 };
 
 $(function(){
@@ -204,6 +205,12 @@ $(function(){
                 code+=this.getdisabledhtml();
                 code+=this.getautofocushtml();
                 code+=this.getvaluehtml();
+                break;
+
+                case "progress":
+                code+='<progress'+this.getidhtml()+this.getvaluehtml();
+                if (this.NumberMax)code+=' max="'+this.NumberMax+'"';
+                code+='></progress>';
                 break;
 
                 default:
@@ -486,6 +493,10 @@ $(function(){
             case "textarea":
             html+='<textarea id="input_'+Input.InputID+'"></textarea>';
             break;
+
+            case "progress":
+            html+='<progress id="input_'+Input.InputID+'"></progress>';
+            break;
             
             default:
             html+='<input type="'+Input.Type+'" id="input_'+Input.InputID+'" />';
@@ -578,7 +589,7 @@ $(function(){
     //Adding an input
     $('.add').click(function(){
         var type=$(this).attr('id');
-        if (type=='range' || type=="number" || type=="color" || type=="date" || type=="time"){
+        if (type=='range' || type=="number" || type=="color" || type=="date" || type=="time" || type=="progress"){
             prompt('Input Type Selection','This HTML5 input does not work 100% in all browsers. What would you like to do?',{
                 'jQuery Replacement' : function(){
                     new Input(type,true);
